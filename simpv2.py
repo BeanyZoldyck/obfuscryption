@@ -8,71 +8,42 @@ GREEN = colorama.Style.BRIGHT + colorama.Fore.GREEN
 D_GREEN = colorama.Style.DIM + colorama.Fore.GREEN
 BLUE = colorama.Style.BRIGHT + colorama.Fore.CYAN
 MAG = colorama.Style.BRIGHT + colorama.Fore.MAGENTA
-end_key='*[*[*['#Literally can be anything (in fact you should decide the best option)
-keyy_enc=''
+end_key=bytearray(b'*[*[*[')#Literally can be anything (in fact you should decide the best option)
 #UzjDYD9rtY
-for i in end_key:
-    keyy_enc+=bin(ord(i))
-def normalize(array):
-    '''
-    Turns dumbass pythoon bytes (0x1101) into normal bytes (0x00001101)
-    '''
-    if type(array) == list:
-        for i in enumerate(array):
-            for j in range(8-len(i[1])):
-                array[i[0]] = '0' + array[i[0]]
-    else:
-        for j in range(8-len(array)):
-                array = '0' + array
-    return array
-key_enc = normalize(keyy_enc.split('0b')[1:]) #one line this
-def check(path):
-    '''
-    Just some function I whipped up to test
-    '''
-    it=0
-    g=''
-    file = bytearray(open(path,'rb').read())
-    for i in file:
-        print(normalize(bin(i).replace('0b',''))[-1],end='')
-        g+=normalize(bin(i).replace('0b',''))[-1]
-        it+=1
-        if it % 8 == 0:
-            input()
 def write(text,path):#use integers instead of bits for some reason... don't see how i missed that..
     with open(path,'rb') as f:
         file = bytearray(f.read())[::-1]
         f.close()
-    messBin = bytearray([bin(ord(i)) for i in text])
-    maxStep = int(len(file)/len(text))
-    
-    for i in file
-    input(messBin)
+    ext = path.split('.')[-1]
+    messBin = bytearray([ord(i) for i in text])
+    maxStep = min(int(len(file)/len(text))-2, 255)#foolproof
+    lastIndex = 0
+    for i,byte in enumerate(messBin):
+        file[lastIndex] = byte
+        step = randint(2,maxStep)
+        file[lastIndex+1] = step
+        if i == len(messBin)-1:
+            file[lastIndex+1:lastIndex+7] = end_key
+            print(file[lastIndex+1:lastIndex+7])
+        else:
+            lastIndex+=step
+    new_path='\\'.join(path.split('\\')[:-1])+f'\\{str(time())[:10]}.{ext}'
+    with open(new_path,'wb') as f:
+        f.write(file[::-1])
+        f.close()
     return new_path
 def read(path):
     with open(path,'rb') as f:
         file = bytearray(f.read())[::-1]
         f.close()
-    message=''
-    text_list=[]
-    text=''
-    for i in file:
-        message+=bin(i)[-1]
-        try:
-            if message[-len(end_key)*8:] == '0010101001011011'*3:#end key in binary
-                message = message[:-len(end_key)*8]
-                break
-        except IndexError:
-            pass
-    if len(message) % 8 != 0:
-        return False
-    else:
-        for i in range(len(message)):
-            if i%8 == 0:
-                text_list.append(message[i:i+8])
-        for i in text_list:
-            text+=chr(int(i,2))
-    return text
+    message = bytearray()
+    lastIndex = 0
+    for index, byte in enumerate(file):
+        if index == lastIndex:
+            message.append(byte)
+            lastIndex+=file[index+1]
+            if file[lastIndex+1:lastIndex+7] == end_key:
+                return message.decode()+chr(file[lastIndex])
 while True:
     print(BLUE+"\nWelcome to the S.I.M.P (Steganography Interface for Message Privitation)\nPath (q to quit): "+RESET,end='')
     g=input().replace('"','').replace("'","")
