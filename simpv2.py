@@ -24,7 +24,6 @@ def write(text,path):#use integers instead of bits for some reason... don't see 
         file[lastIndex+1] = step
         if i == len(messBin)-1:
             file[lastIndex+1:lastIndex+7] = end_key
-            print(file[lastIndex+1:lastIndex+7])
         else:
             lastIndex+=step
     new_path='\\'.join(path.split('\\')[:-1])+f'\\{str(time())[:10]}.{ext}'
