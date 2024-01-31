@@ -49,13 +49,13 @@ while True:
     if '\\' in g or ('/' in g):
         print(BLUE+'Read or Write (r/w): '+RESET,end='')
         u = input()
-        if u == 'r':
+        if 'r' in u.lower():
             r = read(g)
             if r:
                 print(D_GREEN+'Text: '+RESET+r)
             else:
                 print(RED+'\n[Error] Failed to read file'+RESET)
-        elif u == 'w':
+        elif 'w' in u.lower():
             print(GREEN+'Message: '+RESET,end='')
             txt=input()
             writh=write(txt,g)
